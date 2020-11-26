@@ -29,6 +29,12 @@ A simple command to run the step is shown as below.
 python main.py 10000 --verbose --seed 0 --draw
 ```
 
+For testing the initialization model without training, run the following command.
+
+```shell
+python main.py 10000 --total_epochs 0 --verbose --seed 0 --draw
+```
+
 ## Results
 
 <div align="center">
