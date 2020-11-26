@@ -1,13 +1,20 @@
 import numpy as np
 
-from .vis import draw3d
 
+def check_accuracy(model, number=1000):
+    """Check model accuracy using loss.
 
-def check_accuracy(model):
-    number = 1000
-    X1 = np.linspace(-5, 5, num=number)
-    X2 = np.linspace(-5, 5, num=number)
-    x1, x2 = np.meshgrid(X1, X2)
+    Args:
+        model (object): Model to be checked.
+        number (int): number of grid. Default: 1000.
+
+    Returns:
+        tuple[float, dict]: loss and dict for drawing.
+    """
+
+    x1 = np.linspace(-5, 5, num=number)
+    x2 = np.linspace(-5, 5, num=number)
+    x1, x2 = np.meshgrid(x1, x2)
     X = []
     for i, x in enumerate(x1):
         X.append(
@@ -18,7 +25,7 @@ def check_accuracy(model):
     y_ = model.loss(X).reshape(y.shape[0], )
     loss = np.mean((y_.reshape(X.shape[0], 1) - y.reshape(X.shape[0], 1))**2)
 
-    # 画目标函数图
     Y = np.array([y_[i * number:(i + 1) * number] for i in range(number)])
-    draw3d(x1, x2, Y)
-    return loss
+    grid_dict = dict(x=x1, y=x2, z=Y)
+
+    return loss, grid_dict

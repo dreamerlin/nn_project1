@@ -2,9 +2,13 @@ import numpy as np
 
 
 def affine_forward(x, w, b):
-    #  x.shape = (N, d1, d2, ..., dn)
-    #  w.shape = (D, W)
-    #  b.shape = (W,)
+    """Implementation of affine forward
+
+    Args：
+        x (np.ndarray): (N, d1, d2, ..., dn) shape.
+        w (np.ndarray): (D, W) shape.
+        b (np.ndarray): (W, ) shape.
+    """
     n, d = x.shape[0], x.size // x.shape[0]
     out = np.dot(x.reshape(n, -1), w) + b
     cache = (x, w, b)
@@ -12,11 +16,15 @@ def affine_forward(x, w, b):
 
 
 def affine_backward(dout, cache):
-    # dout.shape = (N, W)
-    # dx.shape = (N, D)
-    # dw.shape = (D, W)
-    # db.shape = (W, )
-    # 梯度反向传播
+    """Backward of affine.
+
+    Args:
+        dout (np.ndarray): (N, W) shape.
+        cache (tuple): x and w.
+
+    Returns:
+        Tuple of dx (N, D), dw (D, W), db (W, ).
+    """
     x, w, _ = cache
     n = x.shape[0]
     dx = np.dot(dout, w.T).reshape(x.shape)
