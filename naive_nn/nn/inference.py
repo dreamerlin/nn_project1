@@ -2,14 +2,17 @@ import numpy as np
 
 
 def affine_forward(x, w, b):
-    """Implementation of affine forward
+    """Implementation of affine forward.
 
     Args：
         x (np.ndarray): (N, d1, d2, ..., dn) shape.
         w (np.ndarray): (D, W) shape.
         b (np.ndarray): (W, ) shape.
+
+    Returns:
+        out, cahed
     """
-    n, d = x.shape[0], x.size // x.shape[0]
+    n = x.shape[0]
     out = np.dot(x.reshape(n, -1), w) + b
     cache = (x, w, b)
     return out, cache

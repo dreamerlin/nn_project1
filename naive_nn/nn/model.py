@@ -36,9 +36,11 @@ class MultiLayerClassifier:
         self.params['w1'] = normal_init((mean, std), (2, dims[0]))
         self.params['b1'] = zero_init((dims[0], ))
         for i in range(1, self.hidden_num):
-            self.params[f'w{i+1}'] = normal_init((mean, std), (dims[i - 1], dims[i]))
+            self.params[f'w{i+1}'] = normal_init((mean, std),
+                                                 (dims[i - 1], dims[i]))
             self.params[f'b{i+1}'] = zero_init((dims[i], ))
-        self.params[f'w{self.hidden_num+1}'] = normal_init((mean, std), (dims[-1], 1))
+        self.params[f'w{self.hidden_num+1}'] = normal_init((mean, std),
+                                                           (dims[-1], 1))
         self.params[f'b{self.hidden_num+1}'] = zero_init((1, ))
 
         self.leaky_ratio = leaky_ratio
@@ -55,7 +57,7 @@ class MultiLayerClassifier:
         self.bn_params = bn_params
 
     def loss(self, x, y=None):
-        """Calculate loss and grads
+        """Calculate loss and grads.
 
         Args:
             x (np.ndarray): x values.
@@ -77,9 +79,9 @@ class MultiLayerClassifier:
                                                self.leaky_ratio)
             cache_list.append(cache)
             if self.use_batchnorm:
-                out, bn_cache, self.bn_params = batchnorm(out, self.params[f'gamma{i}'],
-                                          self.params[f'beta{i}'],
-                                          **self.bn_params)
+                out, bn_cache, self.bn_params = batchnorm(
+                    out, self.params[f'gamma{i}'], self.params[f'beta{i}'],
+                    **self.bn_params)
                 cache_list.append(bn_cache)
         out, cache = affine_forward(out, self.params[f'w{self.hidden_num+1}'],
                                     self.params[f'b{self.hidden_num+1}'])

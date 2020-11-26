@@ -2,7 +2,7 @@ import argparse
 
 import numpy as np
 from naive_nn.nn import MultiLayerClassifier, Runner
-from naive_nn.utils import check_accuracy, set_random_seed, draw3d, draw2d
+from naive_nn.utils import check_accuracy, draw2d, draw3d, set_random_seed
 
 
 def parse_args():
@@ -13,7 +13,8 @@ def parse_args():
     parser.add_argument('--lr', help='learning rate', default=1e-3)
     parser.add_argument(
         '--momentum', help='momentum of the bn module', default=0.9)
-    parser.add_argument('--eps', help='epsilon of the bn module', default=1e-5)
+    parser.add_argument(
+        '--eps', type=float, help='epsilon of the bn module', default=1e-5)
     parser.add_argument(
         '--dims',
         help='dimension of each layer',
@@ -22,9 +23,15 @@ def parse_args():
         default=(10, 10))
     parser.add_argument('--seed', default=None, type=int, help='random seed')
     parser.add_argument(
-        '--total_epochs', help='Number of epochs in training', default=1000)
+        '--total_epochs',
+        type=int,
+        help='Number of epochs in training',
+        default=1000)
     parser.add_argument(
-        '--log_interval', help='Interval of log printing', default=20000)
+        '--log_interval',
+        type=int,
+        help='Interval of log printing',
+        default=20000)
     parser.add_argument(
         '--verbose', help='Whether to print the log', action='store_true')
     parser.add_argument(

@@ -1,6 +1,13 @@
-# Neural Network Project One 
+# Neural Network Project One
 
 Using Multi layer classifier to fit non-linear models.
+
+## Requirements
+
+* Linux / Windows
+* python 3.7+
+* Numpy
+* matplotlib 3.3.2
 
 ## Install
 
@@ -24,9 +31,18 @@ python main.py 10000 --verbose --seed 0 --draw
 
 ## Results
 
-![figure_2d](resources/figure_2d.png)
+<div align="center">
+<img src="resources/figure_init.png" width="500"/><br>
+<font size=4>prediction before training</font><br>
+<img src="resources/figure_2d.png" width="500"/><br>
+<font face=4>Loss during training</font><br>
+<img src="resources/figure_3d.png" width="500"/><br>
+<font face=4>prediction after training</font>
+</div>
 
-![figure_3d](resources/figure_3d.png)
+## Docs
+
+[Words](resources/林锦涛_MG20330032_大作业1.docx), [PDF](/resources/林锦涛_MG20330032_大作业1.pdf)
 
 ## Features
 

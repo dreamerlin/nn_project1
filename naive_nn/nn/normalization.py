@@ -23,7 +23,13 @@ def batchnorm(x,
         running_mean = momentum * running_mean + (1 - momentum) * sample_mean
         running_var = momentum * running_var + (1 - momentum) * sample_var
         # cache = (x, x_hat, sample_mean, sample_var, gamma, eps)
-        cache = dict(x=x, x_hat=x_hat, sample_mean=sample_mean, sample_var=sample_var, gamma=gamma, eps=eps)
+        cache = dict(
+            x=x,
+            x_hat=x_hat,
+            sample_mean=sample_mean,
+            sample_var=sample_var,
+            gamma=gamma,
+            eps=eps)
     else:
         x_hat = (x - running_mean) / np.sqrt(running_var + eps)
     out = x_hat * gamma + beta

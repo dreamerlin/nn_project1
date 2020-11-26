@@ -1,4 +1,3 @@
-import matplotlib.pyplot as plt
 import numpy as np
 
 
@@ -47,11 +46,12 @@ class Runner:
                 self.best_params[weight] = self.model.params[weight].copy()
 
     def train(self):
-        """training network"""
+        """training network."""
         iters_per_epoch = (self.n + self.batch_size - 1) // self.batch_size
         num_iterations = iters_per_epoch * self.num_epochs
         for i in range(num_iterations):
             self._step()
             if self.verbose and i % self.log_interval == 0:
                 print(f'Training loss: {self.loss_list[-1]} at iteration {i}')
-        self.model.params = self.best_params
+        if len(self.best_params) != 0:
+            self.model.params = self.best_params
