@@ -1,4 +1,5 @@
 import numpy as np
+
 from .vis import draw3d
 
 
@@ -9,10 +10,12 @@ def check_accuracy(model):
     x1, x2 = np.meshgrid(X1, X2)
     X = []
     for i, x in enumerate(x1):
-        X.append(np.hstack([x.reshape(x.shape[0], 1), x2[i].reshape(x2[i].shape[0], 1)]))
+        X.append(
+            np.hstack(
+                [x.reshape(x.shape[0], 1), x2[i].reshape(x2[i].shape[0], 1)]))
     X = np.vstack(X)
     y = (np.sin(X[:, 0]) - np.cos(X[:, 1]))
-    y_ = model.loss(X).reshape(y.shape[0],)
+    y_ = model.loss(X).reshape(y.shape[0], )
     loss = np.mean((y_.reshape(X.shape[0], 1) - y.reshape(X.shape[0], 1))**2)
 
     # 画目标函数图

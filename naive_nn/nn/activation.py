@@ -1,9 +1,10 @@
 import numpy as np
-from .inference import affine_forward, affine_backward
+
+from .inference import affine_backward, affine_forward
 
 
 def sigmoid(x):
-    return 1/(1+np.exp(-x)), x
+    return 1 / (1 + np.exp(-x)), x
 
 
 def sigmoid_backward(dout, save_x):

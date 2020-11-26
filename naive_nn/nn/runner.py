@@ -1,8 +1,9 @@
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 
 
 class Runner:
+
     def __init__(self, model, data, **kwargs):
         self.x = data['x']
         self.y = data['y']
