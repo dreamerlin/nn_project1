@@ -1,4 +1,4 @@
-# Neural Network Project One
+# [Neural Network Project One](https://github.com/dreamerlin/nn_project1)
 
 Using Multi layer classifier to fit non-linear models.
 
