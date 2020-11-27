@@ -47,7 +47,7 @@ def generate_data(n):
         n (int): Number of data to be generated.
 
     Returns:
-        np.ndarray: Generated data
+        dict: Generated data
     """
     x = (np.random.rand(n, 2) - 0.5) * 10
     y = np.sin(x[:, 0]) - np.cos(x[:, 1])

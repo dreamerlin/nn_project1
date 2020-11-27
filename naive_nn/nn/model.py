@@ -16,9 +16,6 @@ class MultiLayerPerceptron:
         mean (float): Mean value for initialization. Default: 0.0.
         std (float): Std value for initialization. Default: 0.05.
         use_batchnorm (bool): Whether to apply batchnorm. Default: False.
-        momentum (float): Momentum value for batchnorm. Default: 0.9.
-        eps (float): Epsilon value fpr batchnorm. Default: 1e-5.
-        mode (str): Mode of model. Default: 'train'.
     """
 
     def __init__(self,
