@@ -14,7 +14,7 @@ def affine_forward(x, w, b):
     """
     n = x.shape[0]
     out = np.dot(x.reshape(n, -1), w) + b
-    cache = (x, w, b)
+    cache = (x, w)
     return out, cache
 
 
@@ -28,7 +28,7 @@ def affine_backward(dout, cache):
     Returns:
         Tuple of dx (N, D), dw (D, W), db (W, ).
     """
-    x, w, _ = cache
+    x, w = cache
     n = x.shape[0]
     dx = np.dot(dout, w.T).reshape(x.shape)
     dw = np.dot(x.reshape(n, -1).T, dout)

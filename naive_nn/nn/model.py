@@ -1,14 +1,13 @@
 import numpy as np
 
-from .activation import (affine_leaky_relu, affine_leaky_relu_backward,
-                         affine_relu, affine_relu_backward)
+from .activation import leaky_relu, leaky_relu_backward, relu, relu_backward
 from .inference import affine_backward, affine_forward
 from .initialization import normal_init, unit_init, zero_init
 from .loss import mse_loss
 from .normalization import batchnorm, batchnorm_backward
 
 
-class MultiLayerClassifier:
+class MultiLayerPerceptron:
     """Multi layer classifier.
 
     Args:
@@ -27,21 +26,16 @@ class MultiLayerClassifier:
                  leaky_ratio=0.0,
                  mean=0.0,
                  std=0.05,
-                 use_batchnorm=False,
-                 momentum=0.9,
-                 eps=1e-5,
-                 mode='train'):
+                 use_batchnorm=False):
         self.hidden_num = len(dims)
         self.params = dict()
-        self.params['w1'] = normal_init((mean, std), (2, dims[0]))
-        self.params['b1'] = zero_init((dims[0], ))
-        for i in range(1, self.hidden_num):
-            self.params[f'w{i+1}'] = normal_init((mean, std),
-                                                 (dims[i - 1], dims[i]))
-            self.params[f'b{i+1}'] = zero_init((dims[i], ))
-        self.params[f'w{self.hidden_num+1}'] = normal_init((mean, std),
-                                                           (dims[-1], 1))
-        self.params[f'b{self.hidden_num+1}'] = zero_init((1, ))
+        all_layer_dims = list(dims)
+        all_layer_dims.insert(0, 2)
+        all_layer_dims.append(1)
+        for i in range(1, len(all_layer_dims)):
+            self.params[f'w{i}'] = normal_init(
+                (mean, std), (all_layer_dims[i - 1], all_layer_dims[i]))
+            self.params[f'b{i}'] = zero_init((all_layer_dims[i], ))
 
         self.leaky_ratio = leaky_ratio
         self.use_batchnorm = use_batchnorm
@@ -49,12 +43,6 @@ class MultiLayerClassifier:
             for i in range(self.hidden_num):
                 self.params[f'gamma{i+1}'] = unit_init((dims[i], ))
                 self.params[f'beta{i+1}'] = zero_init((dims[i], ))
-
-        bn_params = dict()
-        bn_params['mode'] = mode
-        bn_params['momentum'] = momentum
-        bn_params['eps'] = eps
-        self.bn_params = bn_params
 
     def loss(self, x, y=None):
         """Calculate loss and grads.
@@ -66,23 +54,21 @@ class MultiLayerClassifier:
         Returns:
             tuple[float, dict]: loss and gradients.
         """
-        grads = dict()
+
         cache_list = list()
         out = x
         for i in range(1, self.hidden_num + 1):
-            if np.abs(self.leaky_ratio) < 1e-6:
-                out, cache = affine_relu(out, self.params[f'w{i}'],
-                                         self.params[f'b{i}'])
-            else:
-                out, cache = affine_leaky_relu(out, self.params[f'w{i}'],
-                                               self.params[f'b{i}'],
-                                               self.leaky_ratio)
+            out, cache = affine_forward(out, self.params[f'w{i}'],
+                                        self.params[f'b{i}'])
             cache_list.append(cache)
             if self.use_batchnorm:
-                out, bn_cache, self.bn_params = batchnorm(
-                    out, self.params[f'gamma{i}'], self.params[f'beta{i}'],
-                    **self.bn_params)
+                out, bn_cache = batchnorm(out, self.params[f'gamma{i}'],
+                                          self.params[f'beta{i}'])
                 cache_list.append(bn_cache)
+            out, cache = relu(out) if np.abs(
+                self.leaky_ratio) < 1e-5 else leaky_relu(
+                    out, self.leaky_ratio)
+            cache_list.append(cache)
         out, cache = affine_forward(out, self.params[f'w{self.hidden_num+1}'],
                                     self.params[f'b{self.hidden_num+1}'])
         cache_list.append(cache)
@@ -90,20 +76,23 @@ class MultiLayerClassifier:
         if y is None:
             return out
 
+        grads = dict()
         loss, dout = mse_loss(out, y)
         cache = cache_list.pop()
-        dout, grads[f'w{self.hidden_num+1}'], grads[
-            f'b{self.hidden_num+1}'] = affine_backward(dout, cache)
+        dout, dw, db = affine_backward(dout, cache)
+        grads[f'w{self.hidden_num + 1}'] = dw
+        grads[f'b{self.hidden_num + 1}'] = db
         for i in range(self.hidden_num, 0, -1):
+            cache = cache_list.pop()
+            dout = relu_backward(dout, cache) if np.abs(
+                self.leaky_ratio) < 1e-5 else leaky_relu_backward(dout, cache)
             if self.use_batchnorm:
                 bn_cache = cache_list.pop()
-                dout, grads[f'gamma{i}'], grads[
-                    f'beta{i}'] = batchnorm_backward(dout, **bn_cache)
+                dout, dgamma, dbeta = batchnorm_backward(dout, **bn_cache)
+                grads[f'gamma{i}'] = dgamma
+                grads[f'beta{i}'] = dbeta
             cache = cache_list.pop()
-            if np.abs(self.leaky_ratio) < 1e-6:
-                dout, grads[f'w{i}'], grads[f'b{i}'] = affine_relu_backward(
-                    dout, cache)
-            else:
-                dout, grads[f'w{i}'], grads[
-                    f'b{i}'] = affine_leaky_relu_backward(dout, cache)
+            dout, dw, db = affine_backward(dout, cache)
+            grads[f'w{i}'] = dw
+            grads[f'b{i}'] = db
         return loss, grads

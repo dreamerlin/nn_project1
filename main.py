@@ -1,7 +1,7 @@
 import argparse
 
 import numpy as np
-from naive_nn.nn import MultiLayerClassifier, Runner
+from naive_nn.nn import MultiLayerPerceptron, Trainer
 from naive_nn.utils import check_accuracy, draw2d, draw3d, set_random_seed
 
 
@@ -11,10 +11,6 @@ def parse_args():
     parser.add_argument('num', type=int, help='Number of generated data')
     parser.add_argument('--batch_size', help='Batch size', default=64)
     parser.add_argument('--lr', help='learning rate', default=1e-3)
-    parser.add_argument(
-        '--momentum', help='momentum of the bn module', default=0.9)
-    parser.add_argument(
-        '--eps', type=float, help='epsilon of the bn module', default=1e-5)
     parser.add_argument(
         '--dims',
         help='dimension of each layer',
@@ -64,13 +60,9 @@ def main():
     if args.seed is not None:
         set_random_seed(args.seed)
     data = generate_data(args.num)
-    model = MultiLayerClassifier(
-        dims=args.dims,
-        leaky_ratio=0.0,
-        use_batchnorm=args.bn,
-        momentum=args.momentum,
-        eps=args.eps)
-    solver = Runner(
+    model = MultiLayerPerceptron(
+        dims=args.dims, leaky_ratio=0.0, use_batchnorm=args.bn)
+    solver = Trainer(
         model,
         data,
         lr=args.lr,
@@ -79,7 +71,6 @@ def main():
         verbose=args.verbose,
         log_interval=args.log_interval)
     solver.train()
-    model.bn_params['mode'] = 'test'
     loss, grid_dict = check_accuracy(model, args.num_grid)
     print(f'lowest mse loss: {loss}')
 
