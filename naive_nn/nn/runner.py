@@ -1,7 +1,7 @@
 import numpy as np
 
 
-class Runner:
+class Trainer:
     """Runner object to conduct training and inference.
 
     Args:
@@ -16,10 +16,10 @@ class Runner:
         self.n = self.x.shape[0]
         self.model = model
         self.lr = kwargs.get('lr', 1e-3)
-        self.batch_size = kwargs.get('batch_size', 20)
-        self.num_epochs = kwargs.get('num_epochs', 20)
+        self.batch_size = kwargs.get('batch_size', 64)
+        self.num_epochs = kwargs.get('num_epochs', 1000)
         self.verbose = kwargs.get('verbose', False)
-        self.log_interval = kwargs.get('log_interval', 100)
+        self.log_interval = kwargs.get('log_interval', 1000)
         self._init_params()
 
     def _init_params(self):
@@ -36,12 +36,10 @@ class Runner:
         sample_x, sample_y = self.x[idxes], self.y[idxes]
         loss, grads = self.model.loss(sample_x, sample_y)
         self.loss_list.append(loss)
-        # 更新网络参数
         for weight in grads:
             self.model.params[weight] -= self.lr * grads[weight]
-        # 保存最优网络参数
-        if self.loss_list[-1] < self.min_loss:
-            self.min_loss = self.loss_list[-1]
+        if loss < self.min_loss:
+            self.min_loss = loss
             for weight in self.model.params:
                 self.best_params[weight] = self.model.params[weight].copy()
 
@@ -52,6 +50,6 @@ class Runner:
         for i in range(num_iterations):
             self._step()
             if self.verbose and i % self.log_interval == 0:
-                print(f'Training loss: {self.loss_list[-1]} at iteration {i}')
+                print(f'Training loss: {self.loss_list[-1]}      Iteration: {i}')
         if len(self.best_params) != 0:
             self.model.params = self.best_params

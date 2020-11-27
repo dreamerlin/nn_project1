@@ -6,16 +6,11 @@ def normal_init(param, shape):
     return np.random.normal(*param, shape)
 
 
-def random_init(shape):
-    """Random initialization."""
-    return np.random.rand(*shape)
-
-
 def unit_init(shape):
     """Unit initialization."""
-    return np.ones(*shape)
+    return np.ones(shape)
 
 
 def zero_init(shape):
     """Zero initialization."""
-    return np.zeros(*shape)
+    return np.zeros(shape)
