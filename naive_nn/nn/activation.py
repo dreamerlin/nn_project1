@@ -1,7 +1,5 @@
 import numpy as np
 
-from .inference import affine_backward, affine_forward
-
 
 def sigmoid(x):
     """Implementation of sigmoid."""

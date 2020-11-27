@@ -61,9 +61,7 @@ def main():
         set_random_seed(args.seed)
     data = generate_data(args.num)
     model = MultiLayerPerceptron(
-        dims=args.dims,
-        leaky_ratio=0.0,
-        use_batchnorm=args.bn)
+        dims=args.dims, leaky_ratio=0.0, use_batchnorm=args.bn)
     solver = Trainer(
         model,
         data,

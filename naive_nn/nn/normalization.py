@@ -1,21 +1,12 @@
 import numpy as np
 
 
-def batchnorm(x,
-              gamma,
-              beta,
-              eps=1e-5):
+def batchnorm(x, gamma, beta, eps=1e-5):
     """Implementation of batchnorm."""
     mean = np.mean(x, axis=0)
     var = np.var(x, axis=0)
     x_norm = (x - mean) / np.sqrt(var + eps)
-    cache = dict(
-        x=x,
-        x_norm=x_norm,
-        mean=mean,
-        var=var,
-        gamma=gamma,
-        eps=eps)
+    cache = dict(x=x, x_norm=x_norm, mean=mean, var=var, gamma=gamma, eps=eps)
     out = x_norm * gamma + beta
     return out, cache
 

@@ -50,6 +50,7 @@ class Trainer:
         for i in range(num_iterations):
             self._step()
             if self.verbose and i % self.log_interval == 0:
-                print(f'Training loss: {self.loss_list[-1]}      Iteration: {i}')
+                print(
+                    f'Training loss: {self.loss_list[-1]}      Iteration: {i}')
         if len(self.best_params) != 0:
             self.model.params = self.best_params

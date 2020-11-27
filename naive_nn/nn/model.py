@@ -1,7 +1,6 @@
 import numpy as np
 
-from .activation import (leaky_relu, leaky_relu_backward,
-                         relu, relu_backward)
+from .activation import leaky_relu, leaky_relu_backward, relu, relu_backward
 from .inference import affine_backward, affine_forward
 from .initialization import normal_init, unit_init, zero_init
 from .loss import mse_loss
@@ -34,8 +33,9 @@ class MultiLayerPerceptron:
         all_layer_dims.insert(0, 2)
         all_layer_dims.append(1)
         for i in range(1, len(all_layer_dims)):
-            self.params[f'w{i}'] = normal_init((mean, std), (all_layer_dims[i-1], all_layer_dims[i]))
-            self.params[f'b{i}'] = zero_init((all_layer_dims[i],))
+            self.params[f'w{i}'] = normal_init(
+                (mean, std), (all_layer_dims[i - 1], all_layer_dims[i]))
+            self.params[f'b{i}'] = zero_init((all_layer_dims[i], ))
 
         self.leaky_ratio = leaky_ratio
         self.use_batchnorm = use_batchnorm
@@ -58,13 +58,16 @@ class MultiLayerPerceptron:
         cache_list = list()
         out = x
         for i in range(1, self.hidden_num + 1):
-            out, cache = affine_forward(out, self.params[f'w{i}'], self.params[f'b{i}'])
+            out, cache = affine_forward(out, self.params[f'w{i}'],
+                                        self.params[f'b{i}'])
             cache_list.append(cache)
             if self.use_batchnorm:
-                out, bn_cache = batchnorm(
-                    out, self.params[f'gamma{i}'], self.params[f'beta{i}'])
+                out, bn_cache = batchnorm(out, self.params[f'gamma{i}'],
+                                          self.params[f'beta{i}'])
                 cache_list.append(bn_cache)
-            out, cache = relu(out) if np.abs(self.leaky_ratio) < 1e-5 else leaky_relu(out, self.leaky_ratio)
+            out, cache = relu(out) if np.abs(
+                self.leaky_ratio) < 1e-5 else leaky_relu(
+                    out, self.leaky_ratio)
             cache_list.append(cache)
         out, cache = affine_forward(out, self.params[f'w{self.hidden_num+1}'],
                                     self.params[f'b{self.hidden_num+1}'])
@@ -81,7 +84,8 @@ class MultiLayerPerceptron:
         grads[f'b{self.hidden_num + 1}'] = db
         for i in range(self.hidden_num, 0, -1):
             cache = cache_list.pop()
-            dout = relu_backward(dout, cache) if np.abs(self.leaky_ratio) < 1e-5 else leaky_relu_backward(dout, cache)
+            dout = relu_backward(dout, cache) if np.abs(
+                self.leaky_ratio) < 1e-5 else leaky_relu_backward(dout, cache)
             if self.use_batchnorm:
                 bn_cache = cache_list.pop()
                 dout, dgamma, dbeta = batchnorm_backward(dout, **bn_cache)
